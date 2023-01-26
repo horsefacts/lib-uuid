@@ -13,10 +13,10 @@ The canonical string representation of a UUID is a 36 character string with 5 gr
 
 UUIDs are serialized as strings (and often stored as strings when storage efficiency doesn't matter much), but they can be much more efficiently stored as bytes.
 
-Storing an off chain UUID as a Solidity `string` requires three storage slots:
-- The string's length, stored in a mostly empty slot.
-- The first 32 characters of the string in slot 2.
-- The remaining 4 characters in slot 3, mostly empty.
+Storing an off chain UUID as a Solidity `string` requires writing to three storage slots:
+- Slot 1: The string's length, mostly empty.
+- Slot 2: The first 32 characters of the string.
+- Slot 3: The remaining 4 characters, mostly empty.
 
 This is expensive to read and write!
 
@@ -26,8 +26,10 @@ A UUID can instead be stored as 16 rather than 36 bytes. For example, the UUID a
 bytes16(0x07ad2cedd8134b1496795389d38f7a5e)
 ```
 
-This is exactly half a storage slot, leaving plenty of room to pack it with other data.
+This is exactly half a storage slot, leaving plenty of room to pack it with other data, like a `uint128`.
 
 ## Functions
-- `parse(string memory uuid) returns (bytes16)`: Parse a 36-character dash separated UUID string to a `bytes16`. Reverts if the string is not exactly 36 characters, separators are malformed, or contains any non-separator characters other than [0-9a-f].
-- `toString(bytes16 uuid) returns (string memory)`: Format a `bytes16` UUID as a hyphen separated string.
+- `parse(string memory uuid) returns (bytes16)`:
+    - Parse a 36-character dash separated UUID string to a `bytes16`. Reverts if the string is not exactly 36 characters. Reverts if separators are malformed. Reverts if the string contains any non-separator characters other than `[0-9a-f]`.
+- `toString(bytes16 uuid) returns (string memory)`:
+    - Format a `bytes16` UUID as a hyphen separated string.

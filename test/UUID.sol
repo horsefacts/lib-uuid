@@ -87,7 +87,7 @@ contract UUIDTest is Test {
         assertEq(UUID.toString(bytes16(0x32b97deba70649cbab41acdd546037a1)), VALID_4);
     }
 
-    function test_fuzz_format_parse(bytes16 uuid) public {
+    function test_fuzz_format_parse_roundtrip(bytes16 uuid) public {
         assertEq(UUID.parse(UUID.toString(uuid)), uuid);
     }
 }
